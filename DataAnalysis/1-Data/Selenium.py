@@ -7,15 +7,14 @@ import csv
 import pandas as pd
 
 def data():
-    sayfa = int(input("Sayfa sayısını giriniz = "))
+    sayfa = int(input("Çekmek istediğiniz Sayfa sayısını giriniz = "))
     driver_path = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
     browser = webdriver.Chrome(executable_path=driver_path)
     browser.get("https://twitter.com/search?q=Asgari%20%C3%BCcret&src=typed_query&f=live")
-    browser.set_window_size(1920,1080)
     
     file = open("tweetler.csv","w",encoding="utf-8")
     writer = csv.writer(file)
-    writer.writerow(["KullanıcıAdi","Tweet",])
+    writer.writerow(["Isim","KullanıcıAdi","YorumSayisi","RetweetSayisi","BegeniSayisi","Tweet"])
     
     a = 0
     while a < sayfa:
@@ -39,12 +38,13 @@ def data():
         for tweet in tweetler:
 
             try:
-                
+                Isim = tweet.find("div", attrs={"css-901oao css-bfa6kz r-18jsvk2 r-1qd0xha r-a023e6 r-b88u0q r-ad9z0x r-bcqeeo r-3s2u2q r-qvutc0"}).text
                 KullanıcıAdı = tweet.find("div", attrs={"css-901oao css-bfa6kz r-m0bqgq r-18u37iz r-1qd0xha r-a023e6 r-16dba41 r-ad9z0x r-bcqeeo r-qvutc0"}).text
                 Tweet = tweet.find("div", attrs={"css-901oao r-18jsvk2 r-1qd0xha r-a023e6 r-16dba41 r-ad9z0x r-bcqeeo r-bnwqim r-qvutc0"}).text
-
-
-                writer.writerow([KullanıcıAdı,Tweet])
+                YorumSayisi = tweet.find("div", attrs={"data-testid":"reply"}).text
+                RetweetSayisi = tweet.find("div", attrs={"data-testid":"retweet"}).text
+                BegeniSayisi = tweet.find("div", attrs={"data-testid":"like"}).text
+                writer.writerow([Isim,KullanıcıAdı,YorumSayisi,RetweetSayisi,BegeniSayisi,Tweet])
 
             except:
                 print("**")
