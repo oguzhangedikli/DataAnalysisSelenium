@@ -6,15 +6,26 @@ from selenium.webdriver.common.keys import Keys
 
 
 def data():
+    #Kullanıcıdan alınan veriler.
     kullanici = input("Kullanıcı Adını Giriniz: ")
     sifre = input('Şifrenizi Giriniz: ')
     sayfa = int(input("Çekmek istediğiniz Sayfa sayısını giriniz = "))
     kelime = input("Aramak İstediğiniz Kelimeyi Giriniz: ")
+    #
+
+    # Chromedriver yolunu gösterme ve açma
     driver_path = "C:\Program Files\Google\Chrome\Application\chromedriver.exe"
     browser = webdriver.Chrome(executable_path=driver_path)
-    browser.get("https://chrome.google.com/webstore/detail/adblock-plus-free-ad-bloc/cfhdojbkjhnklbpkdaibdccddilifddb?hl=tr")
+    #
+
+    # Adblocer sayfasına gitme ve browser ekranını büyütme
+    browser.get(
+        "https://chrome.google.com/webstore/detail/adblock-plus-free-ad-bloc/cfhdojbkjhnklbpkdaibdccddilifddb?hl=tr")
     browser.set_window_size(1920, 1080)
     time.sleep(15)
+    #
+
+    # Twitter adresine gitme ve kullanıcıdan alınan veriler ile login işlemi gerçekleştirme.
     browser.get("https://twitter.com/login")
     time.sleep(1)
     browser.find_element_by_xpath(
@@ -28,20 +39,26 @@ def data():
     browser.find_element_by_xpath(
         "//*[@id='react-root']/div/div/div[2]/main/div/div/div[1]/form/div/div[3]/div/div").click()
     time.sleep(5)
-    aranacak = browser.find_element_by_xpath(
-        "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[1]/div/div/div/form/div[1]/div/div/div[2]/input")
+    #
+
+    #Twittera giriş yaptıktan sonra arama kısmına girilen veriyi yazıp aramak ve son verilere girme
+    aranacak = browser.find_element_by_xpath("//*[@id='react-root']/div/div/div[2]/main/div/div/div/div[2]/div/div[2]/div/div/div/div[1]/div/div/div/form/div[1]/div/div/div[2]/input")
     aranacak.send_keys(kelime)
     time.sleep(2)
     aranacak.send_keys(Keys.ENTER)
-    time.sleep(2)
-    browser.find_element_by_xpath(
-        "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div/div/div[1]/div[2]/nav/div/div[2]/div/div[2]/a/div").click()
-    time.sleep(2)
-    # browser.get('https://twitter.com/search?q=asgari%20%C3%BCcret&src=typed_query')
+    time.sleep (2)
+    browser.find_element_by_xpath ("//*[@id='react-root']/div/div/div[2]/main/div/div/div/div/div/div[1]/div[2]/nav/div/div[2]/div/div[2]/a/div").click ()
+    time.sleep (2)
+    #
+
+    #yeni bir .csv dosyası ve sütun oluşturmaa
     file = open("tweetler.csv", "w", encoding="utf-8")
     writer = csv.writer(file)
     writer.writerow(["Isim", 'KullaniciAdi', "YorumSayisi", "RetweetSayisi", "BegeniSayisi", "Tweet"])
+    #
 
+
+    #Sayfayı aşağıya kaydırma ve verileri çekme
     a = 0
     while a < sayfa:
         lastHeight = browser.execute_script("return document.body.scrollHeight")
@@ -78,11 +95,13 @@ def data():
                 print("**")
 
         a = a + 1
-
+    #
 
 data()
 
+#Pandas kütüphanesi ile oluşturduğumuz csv dosyasını düzenli bir şekilde excel dosyasına dönüştürme
 from pandas import read_csv
 
 ss = read_csv("tweetler.csv")
 ss.to_excel("tweetler_excel.xlsx")
+#
