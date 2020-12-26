@@ -18,11 +18,11 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 
 
 ##TEST VERİSİNİ İÇERİ ALMA.
-train_df=pd.read_excel ('TestVeriSeti.xlsx')
-df=pd.read_excel('KategorisizTweet.xlsx')
-dfTW=pd.read_excel('Tweet.xlsx')
-dataTW = pd.DataFrame(dfTW["Tweet"])
-dataTW["Tweet"] = dataTW["Tweet"].apply(lambda r: str(r))
+train_df=pd.read_excel ('kullanılan_veriler/test_veri_seti.xlsx')
+df=pd.read_excel('kullanılan_veriler/ogrenme_veri_seti.xlsx')
+dfTAM=pd.read_excel('kullanılan_veriler/tweet.xlsx')
+dataFull = pd.DataFrame(dfTAM["Tweet"])
+dataFull["Tweet"] = dataFull["Tweet"].apply(lambda r: str(r))
 
 
 #//////Kategorisi olmayan verileri silme
@@ -275,7 +275,7 @@ tokenizer = AutoTokenizer.from_pretrained("savasy/bert-base-turkish-sentiment-ca
 sa= pipeline("sentiment-analysis", tokenizer = tokenizer, model = model)
 
 sentiment_list = []
-for i in dataTW["Tweet"]:
+for i in dataFull["Tweet"]:
     sentiment_list.append(sa(i))
 
 spredict_list = []
@@ -287,17 +287,12 @@ for i in range(0, len(sentiment_list)):
 spredict_list = pd.DataFrame(spredict_list)
 spredict_list.head()
 
-dataTW["label"] = spredict_list["label"]
-dataTW["score"] = spredict_list["score"]
-dataTW.groupby("label").size()
+dataFull["label"] = spredict_list["label"]
+dataFull["score"] = spredict_list["score"]
+dataFull.groupby("label").size()
 
+df["sentiment"] = dataFull["label"]
+duygu_analizi = df.head(100)
 
-
-df.head()
-
-data.head()
-print(data)
-
-df["sentiment"] = dataTW["label"]
-print(df)
-
+print(duygu_analizi)
+df.to_excel('DuyguAnalizi.xlsx')

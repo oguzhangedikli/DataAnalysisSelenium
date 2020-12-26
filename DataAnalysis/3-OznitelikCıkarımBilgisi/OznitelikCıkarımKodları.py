@@ -17,8 +17,8 @@ import seaborn as sns
 
 
 ##TEST VERİSİNİ İÇERİ ALMA.
-train_df = pd.read_excel ('TestVeriSeti.xlsx')
-df= pd.read_excel('KategorisizTweet.xlsx')
+train_df = pd.read_excel ('kullanılan_veriler/test_veri_seti.xlsx')
+df= pd.read_excel('kullanılan_veriler/ogrenme_veri_seti.xlsx')
 
 #//////Kategorisi olmayan verileri silme
 """
@@ -63,8 +63,8 @@ d = train_df.groupby (["Kategori", "Sayısı"]).size ()
 ##MODEL VE TEST FONKSİYONLARININ OLUŞTURULMASI
 
 model_df = train_df[["Tweet", "Sayısı"]]
-X_train, X_test, y_train, y_test = train_test_split (model_df["Tweet"], model_df["Sayısı"], test_size=0.2,
-                                                     random_state=4)
+X_train, X_test, y_train, y_test = train_test_split (model_df["Tweet"], model_df["Sayısı"], test_size=0.1,
+                                                     random_state=5)
 
 
 
@@ -84,23 +84,23 @@ test_vectors = vectorizer.transform (X_test)
 #print(train_vectors.shape, test_vectors.shape)
 #print(train_vectors)
 
-
-# BOW_VECTOR Modeli
 """
+# BOW_VECTOR Modeli
+
 BoW_Vector = CountVectorizer (min_df=0., max_df=1.)
 BoW_Matrix = BoW_Vector.fit_transform (X_train)
 print (BoW_Matrix)
 #/// Bow_Vector CountVectorizer Bir veri setindeki kelimeleri terim sayısı matrisine dönüştürür.
-"""
+
 
 # Bow_Vector içindeki kelimeleri gösterme
-""" 
+
 features = BoW_Vector.get_feature_names ()
-# print (features)
-"""
+print (features)
+
 
 # Sayısallaşmış test verisi içindeki kelime adedini gösterir
-""" 
+
 kelimesayisi = len (features)
 print(kelimesayisi)
 """
@@ -121,8 +121,8 @@ print(kelimesayisi)
 clf = MultinomialNB ()
 clf.fit (train_vectors, y_train)
 prediction = clf.predict (test_vectors)
-#print("Naive Bayes ::\n", confusion_matrix(y_test, prediction),"\n")
-#print(accuracy_score(y_test, prediction))
+#print("Naive Bayes ::\n", confusion_matrix(y_test, prediction))
+#print(accuracy_score(y_test, prediction),"\n\n")
 
 
 
@@ -131,8 +131,8 @@ prediction = clf.predict (test_vectors)
 LogicReg = LogisticRegression ()
 LogicReg.fit (train_vectors, y_train)
 prediction = LogicReg.predict (test_vectors)
-#print("Logistic Regression ::\n", confusion_matrix(y_test, prediction),"\n")
-#print(accuracy_score(y_test, prediction))
+#print("Logistic Regression ::\n", confusion_matrix(y_test, prediction))
+#print(accuracy_score(y_test, prediction),"\n\n")
 
 
 #DecisionTree
@@ -140,8 +140,8 @@ prediction = LogicReg.predict (test_vectors)
 dTmodel = DecisionTreeClassifier ()
 dTmodel.fit (train_vectors, y_train)
 prediction = dTmodel.predict (test_vectors)
-#print("DecisionTree ::\n", confusion_matrix(y_test, prediction),"\n")
-#print(accuracy_score(y_test, prediction))
+#print("DecisionTree ::\n", confusion_matrix(y_test, prediction))
+#print(accuracy_score(y_test, prediction),"\n\n")
 
 
 #RandomForest
@@ -149,8 +149,8 @@ prediction = dTmodel.predict (test_vectors)
 rForest = RandomForestClassifier ()
 rForest.fit (train_vectors, y_train)
 prediction = rForest.predict (test_vectors)
-# print("RandomForest ::\n",confusion_matrix(y_test,prediction),"\n")
-# print(accuracy_score(y_test, prediction))
+#print("RandomForest ::\n",confusion_matrix(y_test,prediction))
+#print(accuracy_score(y_test, prediction),"\n\n")
 
 
 #GradientBoosting
@@ -158,20 +158,20 @@ prediction = rForest.predict (test_vectors)
 grBoosting = GradientBoostingClassifier ()
 grBoosting.fit (train_vectors, y_train)
 prediction = grBoosting.predict (test_vectors)
-#print("GradientBoosting ::\n", confusion_matrix(y_test, prediction), "\n")
-#print(accuracy_score(y_test, prediction))
+#print("GradientBoosting ::\n", confusion_matrix(y_test, prediction))
+#print(accuracy_score(y_test, prediction),"\n\n")
 
 
 #Cross-validation
 """
 scores = cross_val_score (clf, train_vectors, y_train, cv=5)
-#print ("Accuracy for Naive Bayes: mean: {0:.2f} 2sd: {1:.2f}".format (scores.mean (), scores.std () * 2))
-#print ("Scores::", scores)
-#print ("\n")
+print ("Accuracy for Naive Bayes: mean: {0:.2f} 2sd: {1:.2f}".format (scores.mean (), scores.std () * 2))
+print ("Scores::", scores)
+print ("\n")
 
 scores2 = cross_val_score (LogicReg, train_vectors, y_train, cv=5)
-#print ("Accuracy for Logistic Regression: mean: {0:.2f} 2sd: {1:.2f}".format (scores2.mean (), scores2.std () * 2))
-#print ("Scores::", scores2)
+print ("Accuracy for Logistic Regression: mean: {0:.2f} 2sd: {1:.2f}".format (scores2.mean (), scores2.std () * 2))
+print ("Scores::", scores2)
 print ("\n")
 
 scores3 = cross_val_score (dTmodel, train_vectors, y_train, cv=5)
@@ -203,9 +203,11 @@ plt.xlabel ("Başarı")
 sns.barplot (x=accuracy, y=methods, palette="vlag")
 
 for line in range (len (methods)):
-    plt.text (0.65, line - 0.15, "{:.2f}%".format (accuracy[line] * 100), horizontalalignment='left', size='large',
+    plt.text (0.65, line - 0.15, "{:.2f}%".format (accuracy[line] * 100), horizontalalignment='right', size='large',
               color="black")
-plt.show()
+
+#plt.show()
+plt.savefig('5-cross_validation_grafik.pdf')
 """
 
 
@@ -229,13 +231,13 @@ predicted = clf.predict(test_vectors_)
 tahmin = pd.DataFrame(predicted)
 tahmin.rename(columns = {0:'tahmin'}, inplace = True)
 df["NaiveBayesTahmini"] = tahmin
-NBtahmin= df.head(20)
+#NBtahmin= df.head(20)
 #print(NBtahmin)
 
 df.loc[df['NaiveBayesTahmini'] == 0, ['NBkategoriTahminleri']] = 'Siyasi'
 df.loc[df['NaiveBayesTahmini'] == 1, ['NBkategoriTahminleri']] = 'Ekonomi'
 df.loc[df['NaiveBayesTahmini'] == 2, ['NBkategoriTahminleri']] = 'Toplumsal'
-NBTahminKategoriSayi=df.groupby("NBkategoriTahminleri").size()
+#NBTahminKategoriSayi=df.groupby("NBkategoriTahminleri").size()
 #print(NBTahminKategoriSayi)
 
 
@@ -244,23 +246,28 @@ predicted = LogicReg.predict(test_vectors_)
 tahmin = pd.DataFrame(predicted)
 tahmin.rename(columns = {0:'tahmin'}, inplace = True)
 df["LogisticTahmini"] = tahmin
-LGtahmin= df.head(20)
+#LGtahmin= df.head(20)
 #print(LGtahmin)
 
 df.loc[df['LogisticTahmini'] == 0, ['LGkategoriTahminleri']] = 'Siyasi'
 df.loc[df['LogisticTahmini'] == 1, ['LGkategoriTahminleri']] = 'Ekonomi'
 df.loc[df['LogisticTahmini'] == 2, ['LGkategoriTahminleri']] = 'Toplumsal'
-LGtahminKategoriSayi=df.groupby("LGkategoriTahminleri").size()
+#LGtahminKategoriSayi=df.groupby("LGkategoriTahminleri").size()
 #print(LGtahminKategoriSayi)
 
+
+"""
 #Kolon Sayısını Arttırmak için
 desired_width=320
 pd.set_option('display.width', desired_width)
 pd.set_option('display.max_columns',10)
+"""
 
 #Tahminlerin karşılaştırması
-pd.set_option("max_colwidth", None)
-tahminKarsilastirma=df.head(20)
-print(tahminKarsilastirma)
 
+pd.set_option("max_colwidth", 100)
+df.head()
 
+"""
+df.to_excel('7.1-naivebayes_logistic_tahmin_karsılastırması.xlsx')
+"""

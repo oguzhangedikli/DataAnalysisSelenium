@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 
 def data():
     #Kullanıcıdan alınan veriler.
-    kullanici = input("Kullanıcı Adını Giriniz: ")
+    kullanici = input("Kullanıcı Adınızı Giriniz: ")
     sifre = input('Şifrenizi Giriniz: ')
     sayfa = int(input("Çekmek istediğiniz Sayfa sayısını giriniz = "))
     kelime = input("Aramak İstediğiniz Kelimeyi Giriniz: ")
