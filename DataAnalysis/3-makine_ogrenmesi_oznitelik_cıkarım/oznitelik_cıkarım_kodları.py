@@ -76,7 +76,7 @@ X_train, X_test, y_train, y_test = train_test_split (model_df["Tweet"], model_df
 
 ##METNİN SAYISALLAŞTIRILMASI
 
-# TF-ID Modeli
+# TF-IDF Modeli
 
 vectorizer = TfidfVectorizer ()
 train_vectors = vectorizer.fit_transform (X_train)
@@ -84,8 +84,8 @@ test_vectors = vectorizer.transform (X_test)
 #print(train_vectors.shape, test_vectors.shape)
 #print(train_vectors)
 
-"""
-# BOW_VECTOR Modeli
+
+# BoW Modeli
 
 BoW_Vector = CountVectorizer (min_df=0., max_df=1.)
 BoW_Matrix = BoW_Vector.fit_transform (X_train)
@@ -103,7 +103,7 @@ print (features)
 
 kelimesayisi = len (features)
 print(kelimesayisi)
-"""
+
 
 
 
@@ -153,17 +153,17 @@ prediction = rForest.predict (test_vectors)
 #print(accuracy_score(y_test, prediction),"\n\n")
 
 
-#GradientBoosting
+    #GradientBoosting
 
-grBoosting = GradientBoostingClassifier ()
-grBoosting.fit (train_vectors, y_train)
-prediction = grBoosting.predict (test_vectors)
+    grBoosting = GradientBoostingClassifier ()
+    grBoosting.fit (train_vectors, y_train)
+    prediction = grBoosting.predict (test_vectors)
 #print("GradientBoosting ::\n", confusion_matrix(y_test, prediction))
 #print(accuracy_score(y_test, prediction),"\n\n")
 
 
 #Cross-validation
-"""
+
 scores = cross_val_score (clf, train_vectors, y_train, cv=5)
 print ("Accuracy for Naive Bayes: mean: {0:.2f} 2sd: {1:.2f}".format (scores.mean (), scores.std () * 2))
 print ("Scores::", scores)
@@ -191,7 +191,7 @@ print ("\n")
 
 methods = ["Naive Bayes", "Logistic Regression", "Decision Tree", "Random Forest", "Gradient Boosting"]
 accuracy = [scores.mean (), scores2.mean (), scores3.mean (), scores4.mean (), scores5.mean ()]
-"""
+
 
 #Uygulanan Cross-validation'ın görselleştirilmesi
 """

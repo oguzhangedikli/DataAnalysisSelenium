@@ -1,0 +1,12 @@
+Merhaba hocam,
+
+Ödev tesliminde, 4 dosya içerisinde uygulanan ve
+alınan çıktıların tamamı sırası ile numaralandırılmış olarak bulunmakta.
+Yapılan işlemlerin kodlarını ilgili klasörlere ayrı ayrı ekledim.
+
+"SONUC" Excel'i dosyaların dışında bulunmakta.
+
+PROJE_SUNUMU.pdf dosyası ödevin tamamını içeren 
+bir sunum olarak hazırlanmıştır. Gerçekleştirdiğim bütün
+işlemler açılamaları ile birlikte başlıklar halinde
+burada bulunuyor.

@@ -20,9 +20,20 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipe
 ##TEST VERİSİNİ İÇERİ ALMA.
 train_df=pd.read_excel ('kullanılan_veriler/test_veri_seti.xlsx')
 df=pd.read_excel('kullanılan_veriler/ogrenme_veri_seti.xlsx')
-dfTAM=pd.read_excel('kullanılan_veriler/tweet.xlsx')
-dataFull = pd.DataFrame(dfTAM["Tweet"])
-dataFull["Tweet"] = dataFull["Tweet"].apply(lambda r: str(r))
+
+#Kategorili Tweetlerin Duygu Analizi 
+
+dataTEST = pd.DataFrame(train_df["Tweet"])
+train_df["Tweet"] = train_df["Tweet"].apply(lambda r: str(r))
+
+
+
+#Kategorisiz Tweetlerin Duygu Analizi
+
+dataOGR = pd.DataFrame(df["Tweet"])
+df["Tweet"] = df["Tweet"].apply(lambda r: str(r))
+
+
 
 
 #//////Kategorisi olmayan verileri silme
@@ -30,11 +41,12 @@ dataFull["Tweet"] = dataFull["Tweet"].apply(lambda r: str(r))
 df = train_df.dropna(axis=0, how = 'any')
 """
 
-
 # Ana veride kategorisi olan verileri siliyor
 """
 df = train_df.drop(index=['Ekonomi','Siyasi','Toplumsal'], axis=0)
 """
+
+
 
 # Test verisinin içindekileri görme kontrol etme
 """
@@ -168,7 +180,7 @@ prediction = grBoosting.predict (test_vectors)
 
 
 #Cross-validation
-"""
+
 scores = cross_val_score (clf, train_vectors, y_train, cv=5)
 #print ("Accuracy for Naive Bayes: mean: {0:.2f} 2sd: {1:.2f}".format (scores.mean (), scores.std () * 2))
 #print ("Scores::", scores)
@@ -177,26 +189,26 @@ scores = cross_val_score (clf, train_vectors, y_train, cv=5)
 scores2 = cross_val_score (LogicReg, train_vectors, y_train, cv=5)
 #print ("Accuracy for Logistic Regression: mean: {0:.2f} 2sd: {1:.2f}".format (scores2.mean (), scores2.std () * 2))
 #print ("Scores::", scores2)
-print ("\n")
+#print ("\n")
 
 scores3 = cross_val_score (dTmodel, train_vectors, y_train, cv=5)
-print ("Accuracy for Decision Tree: mean: {0:.2f} 2sd: {1:.2f}".format (scores3.mean (), scores3.std () * 2))
-print ("Scores::", scores3)
-print ("\n")
+#print ("Accuracy for Decision Tree: mean: {0:.2f} 2sd: {1:.2f}".format (scores3.mean (), scores3.std () * 2))
+#print ("Scores::", scores3)
+#print ("\n")
 
 scores4 = cross_val_score (rForest, train_vectors, y_train, cv=5)
-print ("Accuracy for Random Forest: mean: {0:.2f} 2sd: {1:.2f}".format (scores4.mean (), scores4.std () * 2))
-print ("Scores::", scores4)
-print ("\n")
+#print ("Accuracy for Random Forest: mean: {0:.2f} 2sd: {1:.2f}".format (scores4.mean (), scores4.std () * 2))
+#print ("Scores::", scores4)
+#print ("\n")
 
 scores5 = cross_val_score (grBoosting, train_vectors, y_train, cv=5)
-print ("Accuracy for Gradient Boosting: mean: {0:.2f} 2sd: {1:.2f}".format (scores5.mean (), scores5.std () * 2))
-print ("Scores::", scores5)
-print ("\n")
+#print ("Accuracy for Gradient Boosting: mean: {0:.2f} 2sd: {1:.2f}".format (scores5.mean (), scores5.std () * 2))
+#print ("Scores::", scores5)
+#print ("\n")
 
 methods = ["Naive Bayes", "Logistic Regression", "Decision Tree", "Random Forest", "Gradient Boosting"]
 accuracy = [scores.mean (), scores2.mean (), scores3.mean (), scores4.mean (), scores5.mean ()]
-"""
+
 
 #Uygulanan Cross-validation'ın görselleştirilmesi
 """
@@ -240,7 +252,7 @@ NBtahmin= df.head(20)
 df.loc[df['NaiveBayesTahmini'] == 0, ['NBkategoriTahminleri']] = 'Siyasi'
 df.loc[df['NaiveBayesTahmini'] == 1, ['NBkategoriTahminleri']] = 'Ekonomi'
 df.loc[df['NaiveBayesTahmini'] == 2, ['NBkategoriTahminleri']] = 'Toplumsal'
-NBTahminKategoriSayi=df.groupby("NBkategoriTahminleri").size()
+df.groupby("NBkategoriTahminleri").size()
 #print(NBTahminKategoriSayi)
 
 
@@ -255,7 +267,7 @@ LGtahmin= df.head(20)
 df.loc[df['LogisticTahmini'] == 0, ['LGkategoriTahminleri']] = 'Siyasi'
 df.loc[df['LogisticTahmini'] == 1, ['LGkategoriTahminleri']] = 'Ekonomi'
 df.loc[df['LogisticTahmini'] == 2, ['LGkategoriTahminleri']] = 'Toplumsal'
-LGtahminKategoriSayi=df.groupby("LGkategoriTahminleri").size()
+df.groupby("LGkategoriTahminleri").size()
 #print(LGtahminKategoriSayi)
 
 #Kolon Sayısını Arttırmak için
@@ -269,13 +281,15 @@ tahminKarsilastirma=df.head(20)
 
 
 
+
+
 ##TURKISH BERT ILE DUYGU ANALIZI
 model = AutoModelForSequenceClassification.from_pretrained("savasy/bert-base-turkish-sentiment-cased")
 tokenizer = AutoTokenizer.from_pretrained("savasy/bert-base-turkish-sentiment-cased")
 sa= pipeline("sentiment-analysis", tokenizer = tokenizer, model = model)
 
 sentiment_list = []
-for i in dataFull["Tweet"]:
+for i in dataTEST["Tweet"]:
     sentiment_list.append(sa(i))
 
 spredict_list = []
@@ -287,12 +301,29 @@ for i in range(0, len(sentiment_list)):
 spredict_list = pd.DataFrame(spredict_list)
 spredict_list.head()
 
-dataFull["label"] = spredict_list["label"]
-dataFull["score"] = spredict_list["score"]
-dataFull.groupby("label").size()
+dataTEST["label"] = spredict_list["label"]
+dataTEST["score"] = spredict_list["score"]
+dataTEST.groupby("label").size()
 
-df["sentiment"] = dataFull["label"]
-duygu_analizi = df.head(100)
+df["sentiment"] = dataTEST["label"]
+duygu_analizi = train_df.head(100)
 
-print(duygu_analizi)
-df.to_excel('DuyguAnalizi.xlsx')
+#print(duygu_analizi)
+df.to_excel('abc.xlsx')
+
+
+grup_logis = df.groupby(["LGkategoriTahminleri", "sentiment"]).size()
+grup_logis = pd.DataFrame(grup_logis).reset_index()
+print(grup_logis)
+grup_logis.rename(columns = {0:'tweet_sayisi'}, inplace = True)
+sns.catplot(x = "LGkategoriTahminleri", y = "tweet_sayisi", hue = "sentiment", kind = "bar", data = grup_logis)
+
+
+
+grup_logis = df.groupby(["NBkategoriTahminleri", "sentiment"]).size()
+grup_logis = pd.DataFrame(grup_logis).reset_index()
+print(grup_logis)
+grup_logis.rename(columns = {0:'tweet_sayisi'}, inplace = True)
+sns.catplot(x = "NBkategoriTahminleri", y = "tweet_sayisi", hue = "sentiment", kind = "bar", data = grup_logis)
+
+plt.show()
